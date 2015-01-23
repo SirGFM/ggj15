@@ -1,2 +1,2 @@
-# ggl15
+# ggj15
 Global Game Jam 2015 repo
