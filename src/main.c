@@ -5,6 +5,7 @@
 #include <GFraMe/GFraMe_controller.h>
 #include <GFraMe/GFraMe_error.h>
 #include <GFraMe/GFraMe_screen.h>
+#include <GFraMe/GFraMe_sprite.h>
 
 #include "global.h"
 #include "playstate.h"
@@ -36,6 +37,10 @@ int main(int argc, char *argv[]) {
     
     GFraMe_controller_init(1);
     // TODO init audio
+    
+    #ifdef DEBUG
+        GFraMe_draw_debug = 1;
+    #endif
     
     while (gl_running) {
         playstate();
