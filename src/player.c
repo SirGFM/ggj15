@@ -4,6 +4,7 @@
 
 #include <GFraMe/GFraMe_controller.h>
 #include <GFraMe/GFraMe_sprite.h>
+#include <GFraMe/GFraMe_spriteset.h>
 
 #include "global.h"
 #include "player.h"
@@ -94,7 +95,27 @@ void pl_update(GFraMe_sprite *pl, int ms) {
 }
 
 void pl_draw(GFraMe_sprite *pl) {
+    int ox, oy;
+    
     // TODO Account the camera
-    GFraMe_sprite_draw(pl);
+    switch (pl->cur_tile) {
+        case 0: {
+            ox = 4;
+            oy = 2;
+        } break;
+        default: {
+            ox = 0;
+            oy = 0;
+        }
+    }
+    
+    GFraMe_spriteset_draw
+        (
+         pl->sset,
+         pl->cur_tile,
+         pl->obj.x + ox,
+         pl->obj.y + oy,
+         pl->flipped
+        );
 }
 
