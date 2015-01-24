@@ -22,8 +22,8 @@ GFraMe_ret gl_init() {
     int atlas_w, atlas_h;
     unsigned char *data;
     
-    atlas_w = 128;
-    atlas_h = 128;
+    atlas_w = 256;
+    atlas_h = 64;
     data = 0;
     
     GFraMe_texture_init(&gl_tex);

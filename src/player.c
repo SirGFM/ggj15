@@ -33,7 +33,7 @@ void pl_init(GFraMe_sprite *pl, int type) {
         );
     
     pl->id = type;
-    pl->cur_tile = 0;
+    pl->cur_tile = 16;
     pl->obj.ay = 500;
 }
 
