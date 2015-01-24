@@ -12,8 +12,10 @@ CC=gcc
 # Define every object required by compilation
 #==============================================================================
  OBJS = \
+         $(OBJDIR)/background.o \
          $(OBJDIR)/global.o \
          $(OBJDIR)/main.o \
+         $(OBJDIR)/player.o \
          $(OBJDIR)/playstate.o
 #==============================================================================
 

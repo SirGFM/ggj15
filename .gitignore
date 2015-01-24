@@ -34,3 +34,5 @@
 # Executable dir
 *bin/
 
+atlas.dat
+assets/src/

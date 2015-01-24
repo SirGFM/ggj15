@@ -5,6 +5,7 @@
 #define __GLOBAL_H_
 
 #include <GFraMe/GFraMe_error.h>
+#include <GFraMe/GFraMe_spriteset.h>
 
 // Game initialization constants
 #define WND_W 640
@@ -26,11 +27,19 @@
 
 // Global variables
 extern int gl_running;
+extern GFraMe_spriteset *gl_sset16x16;
 
 // Functions
 
 GFraMe_ret gl_init();
 void gl_clean();
+
+// ID enum
+enum {
+    ID_PL1,
+    ID_PL2,
+    ID_MAX
+};
 
 #endif
 

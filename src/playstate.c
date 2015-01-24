@@ -6,6 +6,7 @@
 
 #include "global.h"
 #include "playstate.h"
+#include "player.h"
 
 GFraMe_event_setup();
 
@@ -13,6 +14,8 @@ static void ps_init();
 static void ps_event();
 static void ps_update();
 static void ps_draw();
+
+static GFraMe_sprite pl1, pl2;
 
 void playstate() {
     ps_init();
@@ -24,6 +27,9 @@ void playstate() {
 }
 
 static void ps_init() {
+    pl_init(&pl1, ID_PL1);
+    pl_init(&pl2, ID_PL2);
+    
     GFraMe_event_init(GAME_UFPS, GAME_DFPS);
 }
 
@@ -51,11 +57,15 @@ static void ps_event() {
 
 static void ps_update() {
     GFraMe_event_update_begin();
+      pl_update(&pl1, GFraMe_event_elapsed);
+      pl_update(&pl2, GFraMe_event_elapsed);
     GFraMe_event_update_end();
 }
 
 static void ps_draw() {
     GFraMe_event_draw_begin();
+      pl_draw(&pl1);
+      pl_draw(&pl2);
     GFraMe_event_draw_end();
 }
 

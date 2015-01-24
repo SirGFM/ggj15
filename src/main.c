@@ -14,17 +14,17 @@ int main(int argc, char *argv[]) {
     
     rv = GFraMe_init
             (
-            SCR_W,
-            SCR_H,
-            WND_W,
-            WND_H,
-            ORG,
-            NAME,
-            GFraMe_window_none, // GFraMe_window_fullscreen
-            0, // No extensions
-            FPS,
-            0, // Log to file
-            0  // Log append
+             SCR_W,
+             SCR_H,
+             WND_W,
+             WND_H,
+             ORG,
+             NAME,
+             GFraMe_window_none, // GFraMe_window_fullscreen
+             0, // No extensions
+             FPS,
+             0, // Log to file
+             0  // Log append
             );
     GFraMe_assertRet(rv == GFraMe_ret_ok, "Init failed", __ret);
     
