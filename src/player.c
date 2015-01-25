@@ -4,6 +4,7 @@
 
 #include <GFraMe/GFraMe_animation.h>
 #include <GFraMe/GFraMe_controller.h>
+#include <GFraMe/GFraMe_keys.h>
 #include <GFraMe/GFraMe_sprite.h>
 #include <GFraMe/GFraMe_spriteset.h>
 
@@ -52,54 +53,62 @@ void pl_init(GFraMe_sprite *pl, int type) {
 }
 
 void pl_update(GFraMe_sprite *pl, int ms) {
+    int isLeft, isRight, didJump;
+    
+    didJump = pl->obj.hit & GFraMe_direction_down;
     switch (pl->id) {
         case ID_PL1: {
-            if (GFraMe_controllers) {
-                // Horizontal movement
-                if (GFraMe_controllers[0].lx < -0.3 || GFraMe_controllers[0].left) {
-                    pl->obj.vx = -50;
-                    pl->flipped = 1;
-                }
-                else if (GFraMe_controllers[0].lx > 0.3 || GFraMe_controllers[0].right) {
-                    pl->obj.vx = 50;
-                    pl->flipped = 0;
-                }
-                else
-                    pl->obj.vx = 0;
-                // Jump
-                if ((pl->obj.hit & GFraMe_direction_down)
-                    &&  GFraMe_controllers[0].l1)
-                    pl->obj.vy = -150;
+            // Get controls
+            if (GFraMe_controller_max == 1) {
+                isLeft = GFraMe_controllers[0].lx < -0.3 || GFraMe_controllers[0].left;
+                isRight = GFraMe_controllers[0].lx > 0.3 || GFraMe_controllers[0].right;
+                didJump &= GFraMe_controllers[0].l1;
+            }
+            else if (GFraMe_controller_max >= 2) {
+                isLeft = GFraMe_controllers[0].lx < -0.3 || GFraMe_controllers[0].left;
+                isRight = GFraMe_controllers[0].lx > 0.3 || GFraMe_controllers[0].right;
+                didJump &= GFraMe_controllers[0].a;
             }
             else {
-                // TODO keyboard controls
+                isLeft = GFraMe_keys.a;
+                isRight= GFraMe_keys.d;
+                didJump &= GFraMe_keys.w;
             }
         } break;
         case ID_PL2: {
-            if (GFraMe_controllers) {
-                // Horizontal movement
-                if (GFraMe_controllers[0].rx < -0.3
-                    || GFraMe_controllers[0].x) {
-                    pl->obj.vx = -50;
-                    pl->flipped = 1;
-                }
-                else if (GFraMe_controllers[0].rx > 0.3
-                         || GFraMe_controllers[0].b) {
-                    pl->obj.vx = 50;
-                    pl->flipped = 0;
-                }
-                else
-                    pl->obj.vx = 0;
-                // Jump
-                if ((pl->obj.hit & GFraMe_direction_down)
-                    &&  GFraMe_controllers[0].r1)
-                    pl->obj.vy = -150;
+            // Get controls
+            if (GFraMe_controller_max == 1) {
+                isLeft = GFraMe_controllers[0].rx < -0.3 || GFraMe_controllers[0].x;
+                isRight = GFraMe_controllers[0].rx > 0.3 || GFraMe_controllers[0].b;
+                didJump &= GFraMe_controllers[0].r1;
+            }
+            else if (GFraMe_controller_max >= 2) {
+                isLeft = GFraMe_controllers[1].lx < -0.3 || GFraMe_controllers[1].left;
+                isRight = GFraMe_controllers[1].lx > 0.3 || GFraMe_controllers[1].right;
+                didJump &= GFraMe_controllers[1].a;
             }
             else {
-                // TODO keyboard controls
+                isLeft = GFraMe_keys.left;
+                isRight= GFraMe_keys.right;
+                didJump &= GFraMe_keys.up;
             }
         } break;
         default: return;
+    }
+    if (isLeft) {
+        pl->obj.vx = -50;
+        pl->flipped = 1;
+    }
+    else if (isRight) {
+        pl->obj.vx = 50;
+        pl->flipped = 0;
+    }
+    else {
+        pl->obj.vx = 0;
+    }
+    
+    if (didJump) {
+        pl->obj.vy = -150;
     }
     
     if (pl->obj.hit & GFraMe_direction_down) {

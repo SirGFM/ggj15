@@ -14,3 +14,31 @@ t120
 [acr eacr eacr ea+r<c>r]
 [<c+>e<r >g<d>e<r >g<e>e< >g<grf+r4 >]
 
+;
+
+// [percussion]
+
+#H=g;
+#S=%0 @1 na4 o4 e na0;
+#K=%2 @4 v14 o3 b;
+#C=na1 q6 v6 g4 na0 q1 v3;
+
+#TABLE 0 { 128};
+#TABLE 1 { 120, 120, 112, 112, 104, 104, 96, 96, 88, 88, 80, 80, 72, 72, 64, 64, 56, 56, 48, 48 };
+
+// HiHat + Crash
+@1 q1 l16 v3 na0 $
+
+[[Hr]13 r8 C]2
+[HrHr]14 r8C r8
+
+;
+
+// Snare + Kick
+q1 l8 v6$
+
+[SrrS]8
+[SrrS SrrS SSrSrSrr]
+
+
+;// [percussion]

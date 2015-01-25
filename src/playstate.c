@@ -28,8 +28,9 @@ void playstate() {
     GFraMe_event_init(GAME_UFPS, GAME_DFPS);
     while (gl_running) {
         // F*** yeah, bug button!!
-        if (GFraMe_controllers
-            && (GFraMe_controllers[0].select || GFraMe_controllers[0].start))
+        if (GFraMe_controller_max > 0
+            && (GFraMe_controllers[0].select || GFraMe_controllers[0].start)
+            || GFraMe_keys.r)
             ps_init();
         ps_event();
         ps_update();
@@ -41,6 +42,9 @@ static void ps_init() {
     pl_init(&pl1, ID_PL1);
     pl_init(&pl2, ID_PL2);
     
+    bg_init();
+    cam_init();
+    
     GFraMe_object_clear(&lWall);
     GFraMe_hitbox_set
         (
@@ -49,7 +53,7 @@ static void ps_init() {
          0,    // x
          0,    // y
          8,    // w
-         SCR_H // h
+         bg_getHeight() // h
         );
     
     GFraMe_object_clear(&rWall);
@@ -61,18 +65,16 @@ static void ps_init() {
          0,    // x
          0,    // y
          8,    // w
-         SCR_H // h
+         bg_getHeight() // h
         );
     
-    bg_init();
-    cam_init();
 }
 
 static void ps_update() {
   GFraMe_event_update_begin();
      GFraMe_object *list;
      GFraMe_ret rv;
-     int count, i, pl1_on_floor, pl2_on_floor;
+     int count, i, pl1_on_floor, pl2_on_floor, teleport1, teleport2;
      
      pl_update(&pl1, GFraMe_event_elapsed);
      pl_update(&pl2, GFraMe_event_elapsed);
@@ -144,38 +146,43 @@ static void ps_update() {
          }
      }
      
-     // Woooooooooo, teleport!!
-     if (GFraMe_controllers) {
-        if (GFraMe_controllers[0].l2) {
-            int ay, vy, vx;
-            
-            ay = pl2.obj.ay;
-            vx = pl2.obj.vx;
-            vy = pl2.obj.vy;
-            GFraMe_object_set_pos(&pl2.obj, pl1.obj.x, pl1.obj.y);
-            pl2.obj.ay = ay;
-            pl2.obj.vx = vx;
-            pl2.obj.vy = vy;
-            if (pl1.obj.hit & GFraMe_direction_down)
-                pl2.obj.vy = 0;
-            pl2.obj.hit |= GFraMe_direction_down;
-        }
-        else if (GFraMe_controllers[0].r2) {
-            int ay, vy, vx;
-            
-            ay = pl1.obj.ay;
-            vx = pl1.obj.vx;
-            vy = pl1.obj.vy;
-            GFraMe_object_set_pos(&pl1.obj, pl2.obj.x, pl2.obj.y);
-            pl1.obj.ay = ay;
-            pl1.obj.vx = vx;
-            pl1.obj.vy = vy;
-            if (pl2.obj.hit & GFraMe_direction_down)
-                pl1.obj.vy = 0;
-            pl1.obj.hit |= GFraMe_direction_down;
-        }
+     if (GFraMe_controller_max == 1) {
+        teleport1 = GFraMe_controllers[0].l2;
+        teleport2 = GFraMe_controllers[0].r2;
      }
-       
+     else if (GFraMe_controller_max >= 1) {
+        teleport1 = GFraMe_controllers[0].b || GFraMe_controllers[0].x;
+        teleport2 = GFraMe_controllers[1].b || GFraMe_controllers[1].x;
+     }
+     else {
+        teleport1 = GFraMe_keys.s;
+        teleport2 = GFraMe_keys.down;
+     }
+     // Woooooooooo, teleport!!
+     if (teleport1 || teleport2) {
+        GFraMe_object *fixed, *tgt;
+        int ay, vx, vy;
+        
+        if (teleport1) {
+            fixed = &pl1.obj;
+            tgt = &pl2.obj;
+        }
+        else if (teleport2) {
+            fixed = &pl2.obj;
+            tgt = &pl1.obj;
+        }
+        ay = tgt->ay;
+        vx = tgt->vx;
+        vy = tgt->vy;
+        GFraMe_object_set_pos(tgt, fixed->x, fixed->y);
+        tgt->ay = ay;
+        tgt->vx = vx;
+        tgt->vy = vy;
+        if (fixed->hit & GFraMe_direction_down)
+            tgt->vy = 0;
+        tgt->hit |= GFraMe_direction_down;
+     }
+     
    GFraMe_event_update_end();
 }
 
