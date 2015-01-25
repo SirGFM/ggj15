@@ -12,9 +12,11 @@
 #include "global.h"
 
 int gl_running;
+GFraMe_spriteset *gl_sset8x8;
 GFraMe_spriteset *gl_sset16x16;
 
 GFraMe_texture gl_tex;
+static GFraMe_spriteset _glSset8x8;
 static GFraMe_spriteset _glSset16x16;
 
 GFraMe_ret gl_init() {
@@ -54,6 +56,15 @@ GFraMe_ret gl_init() {
          16
         );
     gl_sset16x16 = &_glSset16x16;
+    
+    GFraMe_spriteset_init
+        (
+         &_glSset8x8,
+         &gl_tex,
+         8,
+         8
+        );
+    gl_sset8x8 = &_glSset8x8;
     
     gl_running = 1;
     rv = GFraMe_ret_ok;

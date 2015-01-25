@@ -13,6 +13,7 @@ CC=gcc
 #==============================================================================
  OBJS = \
          $(OBJDIR)/background.o \
+         $(OBJDIR)/camera.o \
          $(OBJDIR)/global.o \
          $(OBJDIR)/main.o \
          $(OBJDIR)/player.o \

@@ -6,21 +6,34 @@
 #include <GFraMe/GFraMe_sprite.h>
 #include <GFraMe/GFraMe_spriteset.h>
 
+#include "background.h"
+#include "camera.h"
 #include "global.h"
 #include "player.h"
 
+#define PL_TILE0 32
+
 void pl_init(GFraMe_sprite *pl, int type) {
+    int y;
+    
+    y = bg_getHeight() - 32;
+    
     GFraMe_sprite_init
         (
          pl,
          0, // x
-         0, // y
+         y, // y
          6,   // phyx width
          11,  // phyx height
          gl_sset16x16, 
          0, // offset x
          0  // offset y
         );
+    
+    if (type == ID_PL1)
+        pl->obj.x = 16;
+    else if (type == ID_PL2)
+        pl->obj.x = SCR_W - 32;
     
     GFraMe_hitbox_set
         (
@@ -33,7 +46,7 @@ void pl_init(GFraMe_sprite *pl, int type) {
         );
     
     pl->id = type;
-    pl->cur_tile = 16;
+    pl->cur_tile = PL_TILE0;
     pl->obj.ay = 500;
 }
 
@@ -99,7 +112,7 @@ void pl_draw(GFraMe_sprite *pl) {
     
     // TODO Account the camera
     switch (pl->cur_tile) {
-        case 0: {
+        case 0 + PL_TILE0: {
             ox = 4;
             oy = 2;
         } break;
@@ -114,7 +127,7 @@ void pl_draw(GFraMe_sprite *pl) {
          pl->sset,
          pl->cur_tile,
          pl->obj.x + ox,
-         pl->obj.y + oy,
+         pl->obj.y + oy - cam_y,
          pl->flipped
         );
 }

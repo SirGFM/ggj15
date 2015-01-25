@@ -8,10 +8,10 @@
 #include <GFraMe/GFraMe_spriteset.h>
 
 // Game initialization constants
-#define WND_W 640
-#define WND_H 480
-#define SCR_W 320
-#define SCR_H 240
+#define WND_W 480
+#define WND_H 640
+#define SCR_W 120
+#define SCR_H 160
 #define ORG "com.gfmgamecorner"
 #define NAME "game"
 #define FPS 60
@@ -27,6 +27,7 @@
 
 // Global variables
 extern int gl_running;
+extern GFraMe_spriteset *gl_sset8x8;
 extern GFraMe_spriteset *gl_sset16x16;
 
 // Functions

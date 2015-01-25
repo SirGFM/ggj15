@@ -22,5 +22,7 @@ void bg_draw();
  */
 int bg_getColliders(GFraMe_object **list);
 
+int bg_getHeight();
+
 #endif
 
