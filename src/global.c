@@ -3,6 +3,7 @@
  */
 
 #include <GFraMe/GFraMe_assets.h>
+#include <GFraMe/GFraMe_audio.h>
 #include <GFraMe/GFraMe_error.h>
 #include <GFraMe/GFraMe_spriteset.h>
 #include <GFraMe/GFraMe_texture.h>
@@ -14,10 +15,12 @@
 int gl_running;
 GFraMe_spriteset *gl_sset8x8;
 GFraMe_spriteset *gl_sset16x16;
+GFraMe_audio *gl_bgm;
 
 GFraMe_texture gl_tex;
 static GFraMe_spriteset _glSset8x8;
 static GFraMe_spriteset _glSset16x16;
+static GFraMe_audio gl_bgm_st;
 
 GFraMe_ret gl_init() {
     GFraMe_ret rv;
@@ -66,6 +69,17 @@ GFraMe_ret gl_init() {
         );
     gl_sset8x8 = &_glSset8x8;
     
+    rv = GFraMe_audio_init
+        (
+        &gl_bgm_st,
+        "song",
+        1,
+        0,
+        1
+        );
+    ASSERT(rv == GFraMe_ret_ok);
+    gl_bgm = &gl_bgm_st;
+    
     gl_running = 1;
     rv = GFraMe_ret_ok;
 __ret:
@@ -76,6 +90,7 @@ __ret:
 }
 
 void gl_clean() {
+    GFraMe_audio_clear(&gl_bgm_st);
     GFraMe_texture_clear(&gl_tex);
 }
 
