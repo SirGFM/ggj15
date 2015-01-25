@@ -2,6 +2,7 @@
  * @file src/player.c
  */
 
+#include <GFraMe/GFraMe_animation.h>
 #include <GFraMe/GFraMe_controller.h>
 #include <GFraMe/GFraMe_sprite.h>
 #include <GFraMe/GFraMe_spriteset.h>
@@ -11,7 +12,7 @@
 #include "global.h"
 #include "player.h"
 
-#define PL_TILE0 32
+#define PL_TILE0 64
 
 void pl_init(GFraMe_sprite *pl, int type) {
     int y;
@@ -25,28 +26,28 @@ void pl_init(GFraMe_sprite *pl, int type) {
          y, // y
          6,   // phyx width
          11,  // phyx height
-         gl_sset16x16, 
+         gl_sset8x16, 
          0, // offset x
          0  // offset y
         );
     
     if (type == ID_PL1)
-        pl->obj.x = 16;
+        GFraMe_object_set_x(&pl->obj, 16);
     else if (type == ID_PL2)
-        pl->obj.x = SCR_W - 32;
+        GFraMe_object_set_x(&pl->obj, SCR_W - 32);
     
     GFraMe_hitbox_set
         (
          &pl->obj.hitbox,
          GFraMe_hitbox_upper_left,
-         4, // x
-         2, // y
+         0, // x
+         0, // y
          6, // w
          11 // h
         );
     
-    pl->id = type;
     pl->cur_tile = PL_TILE0;
+    pl->id = type;
     pl->obj.ay = 500;
 }
 
@@ -77,11 +78,13 @@ void pl_update(GFraMe_sprite *pl, int ms) {
         case ID_PL2: {
             if (GFraMe_controllers) {
                 // Horizontal movement
-                if (GFraMe_controllers[0].rx < -0.3 || GFraMe_controllers[0].x) {
+                if (GFraMe_controllers[0].rx < -0.3
+                    || GFraMe_controllers[0].x) {
                     pl->obj.vx = -50;
                     pl->flipped = 1;
                 }
-                else if (GFraMe_controllers[0].rx > 0.3 || GFraMe_controllers[0].b) {
+                else if (GFraMe_controllers[0].rx > 0.3
+                         || GFraMe_controllers[0].b) {
                     pl->obj.vx = 50;
                     pl->flipped = 0;
                 }
@@ -99,25 +102,28 @@ void pl_update(GFraMe_sprite *pl, int ms) {
         default: return;
     }
     
-    if (pl->obj.hit & GFraMe_direction_down)
-       pl->obj.ay = 0; 
-    else
+    if (pl->obj.hit & GFraMe_direction_down) {
+        pl->obj.ay = 0;
+    }
+    else {
         pl->obj.ay = 500;
+    }
     
     GFraMe_sprite_update(pl, ms);
 }
 
 void pl_draw(GFraMe_sprite *pl) {
-    int ox, oy;
+    int oy;
     
     // TODO Account the camera
     switch (pl->cur_tile) {
         case 0 + PL_TILE0: {
-            ox = 4;
-            oy = 2;
+            oy = 0;
+        } break;
+        case 1 + PL_TILE0: {
+            oy = -2;
         } break;
         default: {
-            ox = 0;
             oy = 0;
         }
     }
@@ -126,7 +132,7 @@ void pl_draw(GFraMe_sprite *pl) {
         (
          pl->sset,
          pl->cur_tile,
-         pl->obj.x + ox,
+         pl->obj.x,
          pl->obj.y + oy - cam_y,
          pl->flipped
         );

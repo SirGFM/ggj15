@@ -14,11 +14,13 @@
 
 int gl_running;
 GFraMe_spriteset *gl_sset8x8;
+GFraMe_spriteset *gl_sset8x16;
 GFraMe_spriteset *gl_sset16x16;
 GFraMe_audio *gl_bgm;
 
 GFraMe_texture gl_tex;
 static GFraMe_spriteset _glSset8x8;
+static GFraMe_spriteset _glSset8x16;
 static GFraMe_spriteset _glSset16x16;
 static GFraMe_audio gl_bgm_st;
 
@@ -62,6 +64,15 @@ GFraMe_ret gl_init() {
     
     GFraMe_spriteset_init
         (
+         &_glSset8x16,
+         &gl_tex,
+         8,
+         16
+        );
+    gl_sset8x16 = &_glSset8x16;
+    
+    GFraMe_spriteset_init
+        (
          &_glSset8x8,
          &gl_tex,
          8,
@@ -75,7 +86,7 @@ GFraMe_ret gl_init() {
         "song",
         1,
         0,
-        1
+        0
         );
     ASSERT(rv == GFraMe_ret_ok);
     gl_bgm = &gl_bgm_st;

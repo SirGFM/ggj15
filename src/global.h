@@ -29,6 +29,7 @@
 // Global variables
 extern int gl_running;
 extern GFraMe_spriteset *gl_sset8x8;
+extern GFraMe_spriteset *gl_sset8x16;
 extern GFraMe_spriteset *gl_sset16x16;
 extern GFraMe_audio *gl_bgm;
 

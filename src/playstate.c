@@ -20,6 +20,7 @@ static void ps_update();
 static void ps_draw();
 
 static GFraMe_sprite pl1, pl2;
+static GFraMe_object lWall, rWall;
 
 void playstate() {
     ps_init();
@@ -34,6 +35,29 @@ static void ps_init() {
     pl_init(&pl1, ID_PL1);
     pl_init(&pl2, ID_PL2);
     
+    GFraMe_object_clear(&lWall);
+    GFraMe_hitbox_set
+        (
+         &lWall.hitbox,
+         GFraMe_hitbox_upper_left,
+         0,    // x
+         0,    // y
+         8,    // w
+         SCR_H // h
+        );
+    
+    GFraMe_object_clear(&rWall);
+    GFraMe_object_set_x(&rWall, SCR_W - 8);
+    GFraMe_hitbox_set
+        (
+         &rWall.hitbox,
+         GFraMe_hitbox_upper_left,
+         0,    // x
+         0,    // y
+         8,    // w
+         SCR_H // h
+        );
+    
     bg_init();
     cam_init();
     
@@ -41,68 +65,90 @@ static void ps_init() {
 }
 
 static void ps_update() {
-    GFraMe_event_update_begin();
-      GFraMe_object *list;
-      GFraMe_ret rv;
-      int count, i, pl1_on_floor, pl2_on_floor;
-      
-      pl_update(&pl1, GFraMe_event_elapsed);
-      pl_update(&pl2, GFraMe_event_elapsed);
-      
-      bg_update();
-      
-      count = bg_getColliders(&list);
-      i = 0;
-      while (i < count) {
-        // Collide the players against the floor
-        rv = GFraMe_object_overlap(&list[i], &pl1.obj, GFraMe_first_fixed);
-        if (rv == GFraMe_ret_ok) {
-            GFraMe_object_set_y
-                (
-                 &pl1.obj,
-                 list[i].y - pl1.obj.hitbox.hh - pl1.obj.hitbox.cy
-                );
-            pl1.obj.vy = 0;
-        }
-        rv = GFraMe_object_overlap(&list[i], &pl2.obj, GFraMe_first_fixed);
-        if (rv == GFraMe_ret_ok) {
-            GFraMe_object_set_y
-                (
-                 &pl2.obj,
-                 list[i].y - pl2.obj.hitbox.hh - pl2.obj.hitbox.cy
-                );
-            pl2.obj.vy = 0;
-        }
-        i++;
-      }
-
-      pl1_on_floor = (pl1.obj.hit & GFraMe_direction_down);
-      pl2_on_floor = (pl2.obj.hit & GFraMe_direction_down);
-      
-      // Then collide them against each other
-      rv = GFraMe_object_overlap(&pl1.obj, &pl2.obj, GFraMe_dont_collide);
-      if (rv == GFraMe_ret_ok) {
-          if (!pl1_on_floor && (pl1.obj.hit & GFraMe_direction_down)) {
-              GFraMe_object_set_y
-                  (
-                   &pl1.obj,
-                   pl2.obj.y - pl1.obj.hitbox.hh - pl1.obj.hitbox.cy
-                  );
-              pl1.obj.vy = 0;
-              pl1.obj.ay = 0;
-          }
-          else if (!pl2_on_floor&& (pl2.obj.hit & GFraMe_direction_down)) {
-              GFraMe_object_set_y
-                  (
-                   &pl2.obj,
-                   pl1.obj.y - pl2.obj.hitbox.hh - pl2.obj.hitbox.cy
-                  );
-              pl2.obj.vy = 0;
-              pl2.obj.ay = 0;
-          }
-      }
-        
-    GFraMe_event_update_end();
+  GFraMe_event_update_begin();
+     GFraMe_object *list;
+     GFraMe_ret rv;
+     int count, i, pl1_on_floor, pl2_on_floor;
+     
+     pl_update(&pl1, GFraMe_event_elapsed);
+     pl_update(&pl2, GFraMe_event_elapsed);
+     
+     bg_update();
+     
+     count = bg_getColliders(&list);
+     i = 0;
+     while (i < count) {
+         // Collide the players against the floor
+         if (!(pl1.obj.hit & GFraMe_direction_down)) {
+             rv = GFraMe_object_overlap(&list[i], &pl1.obj, GFraMe_dont_collide);
+             if (rv == GFraMe_ret_ok) {
+                 GFraMe_object_set_y
+                     (
+                      &pl1.obj,
+                      list[i].y - pl1.obj.hitbox.hh - pl1.obj.hitbox.cy
+                     );
+                 pl1.obj.vy = 0;
+             }
+         }
+         if (!(pl2.obj.hit & GFraMe_direction_down)) {
+             rv = GFraMe_object_overlap(&list[i], &pl2.obj, GFraMe_dont_collide);
+             if (rv == GFraMe_ret_ok) {
+                 GFraMe_object_set_y
+                     (
+                      &pl2.obj,
+                      list[i].y - pl2.obj.hitbox.hh - pl2.obj.hitbox.cy
+                     );
+                 pl2.obj.vy = 0;
+             }
+         }
+         // If both players are colliding, stop
+         if ((pl1.obj.hit & GFraMe_direction_down)
+             && (pl2.obj.hit & GFraMe_direction_down))
+             break;
+         i++;
+     }
+     
+     // Collide against the wall
+     GFraMe_object_overlap(&lWall, &pl1.obj, GFraMe_first_fixed);
+     GFraMe_object_overlap(&rWall, &pl1.obj, GFraMe_first_fixed);
+     GFraMe_object_overlap(&lWall, &pl2.obj, GFraMe_first_fixed);
+     GFraMe_object_overlap(&rWall, &pl2.obj, GFraMe_first_fixed);
+     
+     pl1_on_floor = (pl1.obj.hit & GFraMe_direction_down);
+     pl2_on_floor = (pl2.obj.hit & GFraMe_direction_down);
+     
+     // Then collide them against each other
+     rv = GFraMe_object_overlap(&pl1.obj, &pl2.obj, GFraMe_dont_collide);
+     if (rv == GFraMe_ret_ok) {
+         if (!pl1_on_floor && (pl1.obj.hit & GFraMe_direction_down)) {
+             GFraMe_object_set_y
+                 (
+                  &pl1.obj,
+                  pl2.obj.y - pl1.obj.hitbox.hh - pl1.obj.hitbox.cy
+                 );
+             pl1.obj.vy = 0;
+             pl1.obj.ay = 0;
+         }
+         else if (!pl2_on_floor&& (pl2.obj.hit & GFraMe_direction_down)) {
+             GFraMe_object_set_y
+                 (
+                  &pl2.obj,
+                  pl1.obj.y - pl2.obj.hitbox.hh - pl2.obj.hitbox.cy
+                 );
+             pl2.obj.vy = 0;
+             pl2.obj.ay = 0;
+         }
+     }
+     
+     // Woooooooooo, teleport!!
+     if (GFraMe_controllers) {
+        if (GFraMe_controllers[0].l2)
+            GFraMe_object_set_pos(&pl2.obj, pl1.obj.x, pl1.obj.y);
+        else if (GFraMe_controllers[0].r2)
+            GFraMe_object_set_pos(&pl1.obj, pl2.obj.x, pl2.obj.y);
+     }
+       
+   GFraMe_event_update_end();
 }
 
 static void ps_draw() {
