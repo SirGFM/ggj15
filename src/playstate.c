@@ -24,7 +24,13 @@ static GFraMe_object lWall, rWall;
 
 void playstate() {
     ps_init();
+    
+    GFraMe_event_init(GAME_UFPS, GAME_DFPS);
     while (gl_running) {
+        // F*** yeah, bug button!!
+        if (GFraMe_controllers
+            && (GFraMe_controllers[0].select || GFraMe_controllers[0].start))
+            ps_init();
         ps_event();
         ps_update();
         ps_draw();
@@ -60,8 +66,6 @@ static void ps_init() {
     
     bg_init();
     cam_init();
-    
-    GFraMe_event_init(GAME_UFPS, GAME_DFPS);
 }
 
 static void ps_update() {
@@ -142,10 +146,34 @@ static void ps_update() {
      
      // Woooooooooo, teleport!!
      if (GFraMe_controllers) {
-        if (GFraMe_controllers[0].l2)
+        if (GFraMe_controllers[0].l2) {
+            int ay, vy, vx;
+            
+            ay = pl2.obj.ay;
+            vx = pl2.obj.vx;
+            vy = pl2.obj.vy;
             GFraMe_object_set_pos(&pl2.obj, pl1.obj.x, pl1.obj.y);
-        else if (GFraMe_controllers[0].r2)
+            pl2.obj.ay = ay;
+            pl2.obj.vx = vx;
+            pl2.obj.vy = vy;
+            if (pl1.obj.hit & GFraMe_direction_down)
+                pl2.obj.vy = 0;
+            pl2.obj.hit |= GFraMe_direction_down;
+        }
+        else if (GFraMe_controllers[0].r2) {
+            int ay, vy, vx;
+            
+            ay = pl1.obj.ay;
+            vx = pl1.obj.vx;
+            vy = pl1.obj.vy;
             GFraMe_object_set_pos(&pl1.obj, pl2.obj.x, pl2.obj.y);
+            pl1.obj.ay = ay;
+            pl1.obj.vx = vx;
+            pl1.obj.vy = vy;
+            if (pl2.obj.hit & GFraMe_direction_down)
+                pl1.obj.vy = 0;
+            pl1.obj.hit |= GFraMe_direction_down;
+        }
      }
        
    GFraMe_event_update_end();
