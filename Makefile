@@ -53,10 +53,12 @@ CC=gcc
 # Define LFLAGS (linker flags)
 #==============================================================================
 # Add the framework library
- LFLAGS := -L./lib/GFraMe/bin/Linux -lGFraMe -lm
+ LFLAGS := -lGFraMe -lm
 # Add dependencies
  ifeq ($(OS), Win)
-   LFLAGS := $(LFLAGS) -lSDL2main
+   LFLAGS := -L./lib/GFraMe/bin/Win -lmingw32 $(LFLAGS) -lSDL2main
+ else
+   LFLAGS := -L./lib/GFraMe/bin/Linux $(LFLAGS)
  endif
  LFLAGS := $(LFLAGS) -lSDL2
 #==============================================================================
