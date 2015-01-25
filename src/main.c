@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     GFraMe_assertRet(rv == GFraMe_ret_ok, "global init failed", __ret);
     
     GFraMe_controller_init(1);
-    GFraMe_audio_player_play_bgm(gl_bgm, 1.0f);
+    GFraMe_audio_player_play_bgm(gl_bgm, 0.60f);
     
     #ifdef DEBUG
         GFraMe_draw_debug = 1;

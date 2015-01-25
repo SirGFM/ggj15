@@ -2,6 +2,7 @@
  * @file src/playstate.c
  */
 
+#include <GFraMe/GFraMe_audio_player.h>
 #include <GFraMe/GFraMe_error.h>
 #include <GFraMe/GFraMe_event.h>
 #include <GFraMe/GFraMe_object.h>
@@ -22,14 +23,16 @@ static void ps_draw();
 static GFraMe_sprite pl1, pl2;
 static GFraMe_object lWall, rWall;
 
+static int didTeleport1, didTeleport2;
+
 void playstate() {
     ps_init();
     
     GFraMe_event_init(GAME_UFPS, GAME_DFPS);
     while (gl_running) {
         // F*** yeah, bug button!!
-        if (GFraMe_controller_max > 0
-            && (GFraMe_controllers[0].select || GFraMe_controllers[0].start)
+        if ((GFraMe_controller_max > 0
+            && (GFraMe_controllers[0].select || GFraMe_controllers[0].start))
             || GFraMe_keys.r)
             ps_init();
         ps_event();
@@ -68,6 +71,8 @@ static void ps_init() {
          bg_getHeight() // h
         );
     
+    didTeleport1 = 0;
+    didTeleport2 = 0;
 }
 
 static void ps_update() {
@@ -166,10 +171,14 @@ static void ps_update() {
         if (teleport1) {
             fixed = &pl1.obj;
             tgt = &pl2.obj;
+            if (!didTeleport1)
+                GFraMe_audio_player_push(gl_tp1, 0.8);
         }
         else if (teleport2) {
             fixed = &pl2.obj;
             tgt = &pl1.obj;
+            if (!didTeleport2)
+                GFraMe_audio_player_push(gl_tp2, 0.8);
         }
         ay = tgt->ay;
         vx = tgt->vx;
@@ -182,6 +191,8 @@ static void ps_update() {
             tgt->vy = 0;
         tgt->hit |= GFraMe_direction_down;
      }
+     didTeleport1 = teleport1;
+     didTeleport2 = teleport2;
      
    GFraMe_event_update_end();
 }

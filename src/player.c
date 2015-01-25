@@ -3,6 +3,7 @@
  */
 
 #include <GFraMe/GFraMe_animation.h>
+#include <GFraMe/GFraMe_audio_player.h>
 #include <GFraMe/GFraMe_controller.h>
 #include <GFraMe/GFraMe_keys.h>
 #include <GFraMe/GFraMe_sprite.h>
@@ -108,6 +109,10 @@ void pl_update(GFraMe_sprite *pl, int ms) {
     }
     
     if (didJump) {
+        if (pl->id == ID_PL1)
+            GFraMe_audio_player_push(gl_jmp1, 0.8);
+        else if (pl->id == ID_PL2)
+            GFraMe_audio_player_push(gl_jmp2, 0.8);
         pl->obj.vy = -150;
     }
     

@@ -32,6 +32,10 @@ extern GFraMe_spriteset *gl_sset8x8;
 extern GFraMe_spriteset *gl_sset8x16;
 extern GFraMe_spriteset *gl_sset16x16;
 extern GFraMe_audio *gl_bgm;
+extern GFraMe_audio *gl_jmp1;
+extern GFraMe_audio *gl_jmp2;
+extern GFraMe_audio *gl_tp1;
+extern GFraMe_audio *gl_tp2;
 
 // Functions
 
